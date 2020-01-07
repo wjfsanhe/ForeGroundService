@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -18,6 +19,8 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -56,6 +59,20 @@ public class MainActivity extends AppCompatActivity {
         Intent aIntent = new Intent();
         aIntent.setComponent(new ComponentName("vr.qiyi.com.foregroundservice", "vr.qiyi.com.foregroundservice.MyForegroundService"));
         startService(aIntent);
+        WifiManager wifiManager = ((WifiManager) getSystemService(WIFI_SERVICE));
+        try {
+            Class wmc = Class.forName("android.net.wifi.WifiManager");
+            Method setFrequencyBand = wmc.getMethod("setFrequencyBand", new Class[] {int.class, boolean.class});
+            setFrequencyBand.invoke(wifiManager, 1, true);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean isBackground(String packageName) {
